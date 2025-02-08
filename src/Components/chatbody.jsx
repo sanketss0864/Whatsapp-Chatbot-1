@@ -93,32 +93,7 @@ function Chatbody({ messages, sessionname, phoneno }) {
     );
   };
 
-  function sentimentAnalysis(msgtext, chatid) {
-    const url = "https://prod-31.centralindia.logic.azure.com:443/workflows/3c1e80b1d3574d08bea3c56667e1f28d/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=rUxBYG2WLr4lKQddFU4R1i6zTxhZ2N3V5q6TqgG4zJY";
-    const data = {
-      "text": msgtext,
-      "chatId": chatid
-    };
 
-    setLoading(true);
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setSentimentData(data);
-        setLoading(false);
-        setModalOpen(true);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-        setLoading(false);
-      });
-  }
 
   useEffect(() => {
     if (chatEndRef.current) {
@@ -126,20 +101,7 @@ function Chatbody({ messages, sessionname, phoneno }) {
     }
   }, [messages]);
 
-  const chartData = sentimentData && {
-    labels: ["Negative", "Neutral", "Positive"],
-    datasets: [
-      {
-        label: "Sentiment Probability",
-        data: [
-          sentimentData[0].probabilityNegative,
-          sentimentData[0].probabilityNeutral,
-          sentimentData[0].probabilityPositive,
-        ],
-        backgroundColor: ["#ff6384", "#ffcd56", "#4bc0c0"],
-      },
-    ],
-  };
+
 
   return (
     <>
@@ -198,14 +160,7 @@ function Chatbody({ messages, sessionname, phoneno }) {
                     >
                       Create send email
                     </MenuItem>
-                    {msg.text && (  <MenuItem
-                      icon={<Accessibility24Regular />}
-                      onClick={() =>
-                        sentimentAnalysis(msg?.text, msg?.chatid)
-                      }
-                    >
-                       sentiment analysis
-                    </MenuItem>)}
+                  
                   
                     {msg.mediaUrl && (
                       <Link
@@ -252,26 +207,7 @@ function Chatbody({ messages, sessionname, phoneno }) {
         <div ref={chatEndRef} />
       </div>
 
-      <Dialog
-        open={modalOpen}
-        onDismiss={() => setModalOpen(false)}
-      >
-        <DialogSurface>
-          <DialogBody>
-            <DialogTitle>Sentiment Analysis Result</DialogTitle>
-            <DialogContent>
-              {loading ? (
-                <Spinner label="Loading..." />
-              ) : (
-                sentimentData && <Bar data={chartData} />
-              )}
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={() => setModalOpen(false)}>Close</Button>
-            </DialogActions>
-          </DialogBody>
-        </DialogSurface>
-      </Dialog>
+
     </>
   );
 }

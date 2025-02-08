@@ -458,29 +458,7 @@ const Chat = () => {
       }
     );
   };
-  const summarizeChat = () => {
-    const url = "https://prod-04.centralindia.logic.azure.com:443/workflows/86308b8a86f34bb3baec9c34fde643e9/triggers/manual/paths/invoke?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=-JcgROZ-kF9qFkjPV1HjmYvQd9HSP7MqnQt1XwBF0W4";
-    const data = messages.map((msg) => {if(msg.text){return msg.text}});
 
-
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data.text);
-        setSentimentData(data.text.replace(/\//g, ' '));
-        setModalOpen(true);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      
-      });
-  }
   return (
     <div className="chat-container">
       {/* Top Bar with Back and Menu */}
@@ -550,12 +528,7 @@ const Chat = () => {
                 >
                   Create case
                 </MenuItem>
-                <MenuItem
-                  icon={<Album24Regular />}
-                  onClick={summarizeChat}
-                >
-                  Chat Summarization
-                </MenuItem>
+              
               </MenuList>
             </MenuPopover>
           </Menu>
@@ -597,26 +570,7 @@ const Chat = () => {
 
 
 
-            <Dialog
-              open={modalOpen}
-              onDismiss={() => setModalOpen(false)}
-            >
-              <DialogSurface>
-                <DialogBody>
-                  <DialogTitle>Chat history Summarization</DialogTitle>
-                  <DialogContent>
-                    {loading ? (
-                      <Spinner label="Loading..." />
-                    ) : (
-                     JSON.stringify(sentimentData) 
-                    )}
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={() => setModalOpen(false)}>Close</Button>
-                  </DialogActions>
-                </DialogBody>
-              </DialogSurface>
-            </Dialog>
+        
     </div>
   );
 };
